@@ -376,6 +376,14 @@ const saveEdit = async() => {
     ElMessage.warning('请上传图片！')
     return;
   }
+  if(!passCardInfo.demoPicUrlArr.length){
+    ElMessage.warning('请上传卡片详情图片')
+    return;
+  }
+  if(!passCardInfo.addressPicUrlArr.length){
+    ElMessage.warning('请上传领取地址图片')
+    return;
+  }
   const urls = passCardInfo.picUrlArr.map((item:any)=>{
     if(item.response){
       return item.response.url;

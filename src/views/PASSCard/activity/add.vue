@@ -28,7 +28,7 @@
           />
         </el-form-item>
 
-        <el-form-item label="满减金额" required>
+        <el-form-item label="满减金额" >
           <div class="flex-row">
             <span>满</span>
             <el-input-number v-model="form.promotionPrice" :min="0" :precision="0" :controls="false" class="money-input" placeholder="请输入整数" />
@@ -89,7 +89,8 @@ const rules = {
   enterpriseId: [{ required: true, message: '请选择场馆', trigger: 'change' }],
   name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
   timeRange: [{ required: true, message: '请选择活动时间', trigger: 'change' }],
-  status: [{ required: true, message: '请选择活动状态', trigger: 'change' }]
+  status: [{ required: true, message: '请选择活动状态', trigger: 'change' }],
+
 }
 
 // Get Venues (Creators)
@@ -105,7 +106,7 @@ const getCreatorAll = async () => {
 }
 
 // Get Tasks (Cards) for the selected venue
-const getTasks = async (venueId: string) => {
+const getTasks = async (venueId: string | number) => {
   if (!venueId) {
     transferData.value = []
     return
@@ -117,7 +118,7 @@ const getTasks = async (venueId: string) => {
     if (res.data.success) {
       // API returns a list, map it to transfer data format
       transferData.value = (res.data.result || []).map((item: any) => ({
-        key: item.id,
+        key: String(item.id),
         label: item.name,
         disabled: false
       }))
@@ -130,7 +131,7 @@ const getTasks = async (venueId: string) => {
   }
 }
 
-const handleVenueChange = (val: string) => {
+const handleVenueChange = (val: string | number) => {
   form.taskIds = [] // Clear selection when venue changes
   getTasks(val)
 }
@@ -180,10 +181,11 @@ const onSubmit = () => {
   })
 }
 
-const init = async (data?: any) => {
+const init = async (id?: string,) => {
+  const data = { id }
   await getCreatorAll()
-  if (data) {
-    form.id = data.id
+  if (id) {
+    form.id = id
     // Fetch detail to get full data including passcardIds
     try {
       const res = await proxy.API.getPassActivityDetail({ id: data.id })
@@ -198,13 +200,16 @@ const init = async (data?: any) => {
         
         // Load tasks for this venue
         await getTasks(detail.enterpriseId)
-        
         // Set selected tasks
         if (detail.passcardIds) {
-          form.taskIds = detail.passcardIds.split(',')
+          form.taskIds = detail.passcardIds
+            .split(',')
+            .map((id: string) => id.trim())
+            .filter((id: string) => !!id)
         } else {
           form.taskIds = []
         }
+        console.log(form.taskIds)
       }
     } catch (e) {
       console.error(e)

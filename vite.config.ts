@@ -57,9 +57,9 @@ export default defineConfig(({ command, mode }) => {
 			// 配置代理
 			port:'2222',
 			proxy: {
-				'/api': {
-					// target: "http://192.168.1.113:9063",
-					target: "https://zxadmin.taoart.com/api",
+				'/api': {	
+					target: "http://111.0.130.68:9063",
+					// target: "https://zxadmin.taoart.com/api", 
 					secure: false,
 					changeOrigin: true,
 					rewrite: (path) => path.replace(/^\/api/, '')

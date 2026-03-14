@@ -43,11 +43,15 @@
           </template>
         </el-table-column>
         <el-table-column prop="verifyCount" label="核销人数" min-width="100"/>
-        <el-table-column prop="createTime" label="创建时间" min-width="160"/>
+        <el-table-column prop="createTime" label="创建时间" min-width="160">
+          <template #default="scope">
+						{{ moment(scope.row.createTime).format("YYYY-MM-DD HH:mm") }}
+					</template>
+        </el-table-column>
         <el-table-column label="操作" width="180" align="center">
           <template #default="scope">
             <el-button type="text" icon="Edit" @click="handleEdit(scope.row)">编辑</el-button>
-            <!-- <el-button type="text" icon="Delete" class="red" @click="handleDelete(scope.row)">删除</el-button> -->
+            <el-button type="text" icon="Delete" class="red" @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -71,6 +75,7 @@ import { ref, reactive, onMounted, getCurrentInstance, nextTick } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Plus, Edit, Delete } from '@element-plus/icons-vue'
 import Add from './add.vue'
+import moment from "moment";
 
 const { proxy } = getCurrentInstance() as any
 
@@ -136,7 +141,7 @@ const getData = async () => {
       pageNum: query.pageNum,
       pageSize: query.pageSize,
       name: query.name,
-      promotionDate: query.time,
+      promotionDate: query.time??'',
       enterpriseId: query.enterpriseId
     })
     if (res.data.success) {
@@ -176,6 +181,7 @@ const handleCreate = async () => {
 const handleEdit = async (row: ActivityRow) => {
   show.value = false
   await nextTick()
+  
   addV.value?.init(row.id)
 }
 const updated = () => {
@@ -186,8 +192,7 @@ const handleDelete = (row: ActivityRow) => {
   ElMessageBox.confirm('确认删除该活动？', '提示', { type: 'warning' })
     .then(async () => {
       // 暂时先不要,删除了会影响到历史数据展示
-      ElMessage.warning('暂不支持删除')
-      /*
+      // ElMessage.warning('暂不支持删除')
       try {
         const res = await proxy.API.deletePassActivity({ id: row.id })
         if (res.data.success) {
@@ -200,7 +205,6 @@ const handleDelete = (row: ActivityRow) => {
         console.error(error)
         ElMessage.error('删除失败')
       }
-      */
     })
     .catch(() => {})
 }
