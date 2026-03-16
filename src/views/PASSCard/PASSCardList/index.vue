@@ -27,6 +27,7 @@
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
                 <el-table-column prop="name" label="卡片名称"> </el-table-column>
+                <el-table-column prop="nfcId" label="卡片编号"> </el-table-column>
 				<el-table-column prop="enterpriseName" label="创作者"></el-table-column>
 				<el-table-column prop="createTime" label="创建时间"></el-table-column>
 				<el-table-column label="操作" width="320" align="center">

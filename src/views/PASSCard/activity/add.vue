@@ -139,8 +139,9 @@ const handleVenueChange = (val: string | number) => {
 const onSubmit = () => {
   formRef.value.validate(async (valid: boolean) => {
     if (valid) {
-      if (!form.promotionPrice || !form.discountPrice) {
-        ElMessage.warning('请输入满减金额')
+
+      if (!form.promotionPrice || !form.discountPrice || form.promotionPrice <= form.discountPrice) {
+        ElMessage.warning('请输入正确的满减金额')
         return
       }
 

@@ -45,7 +45,7 @@
             <el-tag type="info" v-else>{{ row.statusStr }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="verifyCount" label="核销人数" min-width="100"/>
+        <el-table-column prop="verificationCount" label="核销人数" min-width="100"/>
         <el-table-column prop="createTime" label="创建时间" min-width="160">
           <template #default="scope">
 						{{ moment(scope.row.createTime).format("YYYY-MM-DD HH:mm") }}
