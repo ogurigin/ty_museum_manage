@@ -38,8 +38,11 @@
         <el-table-column prop="timeRange" label="活动时间" min-width="220"/>
         <el-table-column prop="rule" label="满减金额" min-width="140"/>
         <el-table-column prop="statusStr" label="活动状态" align="center">
-          <template #default="scope">
-            <el-tag :type="scope.row.status === 1 ? 'success' : 'info'">{{ scope.row.statusStr }}</el-tag>
+          <template #default="{row}">
+            <el-tag type="warning" v-if="row.status === 1">{{ row.statusStr }}</el-tag>
+            <el-tag type="success" v-else-if="row.status === 3">{{ row.statusStr }}</el-tag>
+            <el-tag type="danger" v-else-if="row.status === 2">{{ row.statusStr }}</el-tag>
+            <el-tag type="info" v-else>{{ row.statusStr }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="verifyCount" label="核销人数" min-width="100"/>
@@ -58,10 +61,10 @@
       <div class="pagination">
         <el-pagination
           background
-          layout="total, prev, pager, next"
+					layout="->,total, prev, pager, next"
           :current-page="query.pageNum"
-          :page-size="query.pageSize"
-          :total="totalItems"
+					:page-size="query.pageSize"
+          :total="totalPages"
           @current-change="handlePageChange"
         />
       </div>
@@ -99,7 +102,7 @@ const query = reactive({
   pageNum: 1,
   pageSize: 10
 })
-const totalItems = ref(0)
+const totalPages = ref(0)
 const tableData = ref<ActivityRow[]>([])
 const creatorList = ref<any[]>([])
 const show = ref(true)
@@ -145,7 +148,9 @@ const getData = async () => {
       enterpriseId: query.enterpriseId
     })
     if (res.data.success) {
-      const { result, total } = res.data.result
+      const { result,  totalItems} = res.data.result
+      console.log(result);
+      
       tableData.value = (result || []).map((item: any) => ({
         ...item,
         statusStr: item.statusStr,
@@ -153,7 +158,7 @@ const getData = async () => {
         rule: `满${item.promotionPrice}减${item.discountPrice}`,
         verifyCount: 0 
       }))
-      totalItems.value = total
+      totalPages.value =totalItems
     }
   } catch (error) {
     console.error(error)
